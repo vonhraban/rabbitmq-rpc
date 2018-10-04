@@ -9,7 +9,9 @@ interface UserStore
      * @param string $id
      * @return array User details
      *
-     * @throws \Exception if User not found or some other error happened
+     * @throws MalformedResponseException if the response is not a valid JSON
+     * @throws UserNotFoundException if user not found
+     * @throws GenericException if something else is wrong and we do not what
      */
     public function get($id);
 }

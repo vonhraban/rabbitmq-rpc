@@ -66,9 +66,9 @@ class RabbitMQUserStore implements UserStore
 
     /**
      * Callback to be called when response is received
-     * @param $rep
+     * @param AMQPMessage $rep
      */
-    public function onResponse($rep)
+    public function onResponse(AMQPMessage $rep)
     {
         if ($rep->get('correlation_id') == $this->correlationId) {
             $this->response = $rep->body;
@@ -81,7 +81,9 @@ class RabbitMQUserStore implements UserStore
      * @param string $id
      * @return array User details
      *
-     * @throws \Exception if User not found or some other error happened
+     * @throws MalformedResponseException if the response is not a valid JSON
+     * @throws UserNotFoundException if user not found
+     * @throws GenericException if something else is wrong and we do not what
      */
     public function get($id)
     {
@@ -100,18 +102,41 @@ class RabbitMQUserStore implements UserStore
             $this->channel->wait();
         }
 
-        $decoded_response = json_decode($this->response, true);
-        if(isset($decoded_response['error']))
+
+        return $this->parseResponse($this->response);
+    }
+
+    /**
+     * Parse and validate the response and throw exception is anything is not as expected
+     *
+     * @param string $rawResponse Raw response from RabbitMQ
+     *
+     * @return array Parsed response
+     *
+     * @throws MalformedResponseException if the response is not a valid JSON
+     * @throws UserNotFoundException if user not found
+     * @throws GenericException if something else is wrong and we do not what
+     */
+    protected function parseResponse($rawResponse)
+    {
+        $decodedResponse = json_decode($rawResponse, true);
+
+        if ($decodedResponse === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new MalformedResponseException();
+        }
+
+
+        if(isset($decodedResponse['error']))
         {
-            switch($decoded_response['error'])
+            switch($decodedResponse['error'])
             {
                 case 'Not found':
-                    throw new \Exception("User not found");
+                    throw new UserNotFoundException();
                 default:
-                    throw new \Exception("Unexpected error");
+                    throw new GenericException();
             }
         }
 
-        return $this->response;
+        return $decodedResponse;
     }
 }
