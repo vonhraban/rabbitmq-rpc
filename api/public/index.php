@@ -21,10 +21,10 @@ $app->get('/getUser/{id}', function (Request $request, Response $response, array
     $response = $response->withHeader('Content-type', 'application/json');
     /** @var RabbitMQUserStore $rpc_connection */
     try {
-        $user = json_encode($userStore->get($id));
+        $user = $userStore->get($id);
         return $response->withStatus(200)
             ->getBody()
-            ->write($user);
+            ->write(json_encode($user->toArray()));
     } catch (UserNotFoundException $e) {
         return $response->withStatus(404);
     } catch (MalformedResponseException $e) {

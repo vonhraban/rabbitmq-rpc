@@ -79,7 +79,7 @@ class RabbitMQUserStore implements UserStore
      * Get user details by id
      *
      * @param string $id
-     * @return array User details
+     * @return User Response parsed into User
      *
      * @throws MalformedResponseException if the response is not a valid JSON
      * @throws UserNotFoundException if user not found
@@ -111,7 +111,7 @@ class RabbitMQUserStore implements UserStore
      *
      * @param string $rawResponse Raw response from RabbitMQ
      *
-     * @return array Parsed response
+     * @return User Response parsed into User
      *
      * @throws MalformedResponseException if the response is not a valid JSON
      * @throws UserNotFoundException if user not found
@@ -137,6 +137,6 @@ class RabbitMQUserStore implements UserStore
             }
         }
 
-        return $decodedResponse;
+        return User::fromArray($decodedResponse);
     }
 }

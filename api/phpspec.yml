@@ -1,0 +1,4 @@
+suites:
+  default:
+    namespace: Datix
+    psr4_prefix: Datix

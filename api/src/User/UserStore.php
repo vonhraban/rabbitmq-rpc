@@ -7,7 +7,7 @@ interface UserStore
      * Get user details by id
      *
      * @param string $id
-     * @return array User details
+     * @return User Response parsed into User
      *
      * @throws MalformedResponseException if the response is not a valid JSON
      * @throws UserNotFoundException if user not found
