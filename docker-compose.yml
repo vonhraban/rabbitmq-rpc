@@ -25,4 +25,4 @@ services:
     build: ./build/rpc_server
     container_name: rpc_server
     volumes:
-      - ./server:/var/app
+      - ./db_service:/var/app
