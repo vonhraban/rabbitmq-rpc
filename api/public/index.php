@@ -29,8 +29,6 @@ $app->get('/getUser/{id}', function (Request $request, Response $response, array
         return $response->withStatus(404);
     } catch (MalformedResponseException $e) {
         return $response->withStatus(502);
-    } catch (\Exception $e) {
-        return $response->withStatus(500);
     }
 });
 
