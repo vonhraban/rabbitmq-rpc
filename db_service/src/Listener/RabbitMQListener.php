@@ -6,9 +6,9 @@ use PhpAmqpLib\Message\AMQPMessage;
 
 class RabbitMQListener {
     /**
-     * @var callable User defined callback to be executed upon a new message
+     * @var callable User defined map of command to callback to be executed upon a new message
      */
-    private $userCallback;
+    private $userCallback = [];
 
     /**
      * RabbitMQListener constructor
@@ -28,8 +28,8 @@ class RabbitMQListener {
      * @param callable $userCallback Callback to be executed when the new message arrives
      *                              function(string $messageBody)
      */
-    public function listen($userCallback /* , $messageType */) { // this will create a map of type to callback
-        $this->userCallback = $userCallback;
+    public function listen($command, $userCallback) {
+        $this->userCallback[$command] = $userCallback;
 
         $this->channel->basic_qos(null, 1, null);
         $this->channel->basic_consume($this->queue_name, '', false, false, false, false, [$this, 'messageCallback']);
@@ -45,8 +45,10 @@ class RabbitMQListener {
      * and replies to the channel
      *
      * @param AMQPMessage $req Received request message
+     *
+     * @return bool True if succeeded, false if not
      */
-    public function messageCallback(AMQPMessage $req) {
+    public function messageCallback(AMQPMessage $req): bool {
         echo 'Received ', $req->body, "\n";
 
         $receivedMessage = json_decode($req->body, true);
@@ -60,21 +62,18 @@ class RabbitMQListener {
         if(!isset($receivedMessage['command']) || !isset($receivedMessage['payload']))
         {
             throw new MalformedMessageException($req->body);
+        }
 
+        if(!isset($this->userCallback[$receivedMessage['command']])) {
+            echo "I do not know how to handle `" . $receivedMessage['command'] . "` command";
+            return false;
         }
 
         $responseMessage = call_user_func(
-            $this->userCallback,
-            $receivedMessage['command'],
+            $this->userCallback[$receivedMessage['command']],
             $receivedMessage['payload']
         );
 
-        if($responseMessage === false) {
-            // do not do anything if the callback is not subscribed to that command
-            return;
-        }
-
-        // TODO! only ack is the rezponse is not false
         // create message
         $msg = new AMQPMessage(
             json_encode($responseMessage),
@@ -90,5 +89,7 @@ class RabbitMQListener {
         $req->delivery_info['channel']->basic_ack(
             $req->delivery_info['delivery_tag']
         );
+
+        return true;
     }
 }

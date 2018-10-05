@@ -15,13 +15,8 @@ $connection = new AMQPStreamConnection(
     $config['rabbitmq']['password']
 );
 
-function findUsers($command, array $payload) { // This message could be also a nice wrapper class
+function findUsers(array $payload) { // This message could be also a nice wrapper class
     global $config; // TODO this is not nice
-
-    // we only want that one single command
-    if($command != 'getUser') {
-        return false;
-    }
 
     // some fancy validation logic could go here
 
@@ -39,4 +34,4 @@ function findUsers($command, array $payload) { // This message could be also a n
 }
 
 $listener = new RabbitMQListener($connection, $config['rabbitmq']['queue_name']);
-$listener->listen('findUsers');
+$listener->listen('getUser', 'findUsers');
