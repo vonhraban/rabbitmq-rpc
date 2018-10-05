@@ -5,6 +5,6 @@ return [
         'port' => 5672,
         'user' => 'guest',
         'password' => 'guest',
-        'queue_name' => 'rpc_queue',
+        'queue_name' => 'UserRequests',
     ],
 ];
