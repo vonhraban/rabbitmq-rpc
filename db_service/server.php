@@ -15,7 +15,14 @@ $connection = new AMQPStreamConnection(
     $config['rabbitmq']['password']
 );
 
-function findUsers(array $payload) { // This message could be also a nice wrapper class
+/**
+ * Handle getUser command
+ *
+ * @param array $payload Request payload
+ *
+ * @return array Response to send back
+ */
+function findUsers(array $payload): array { // This message could be also a nice wrapper class
     global $config; // TODO this is not nice
 
     // some fancy validation logic could go here
@@ -24,12 +31,15 @@ function findUsers(array $payload) { // This message could be also a nice wrappe
     try {
         $user = $userStore->get((int)$payload['id']);
 
-        return $user->toArray();
+        return [
+            'type' => 'UserData',
+            'payload' => $user->toArray(),
+        ];
 
     } catch (UserNotFoundException $e) {
-        return ['error' => "Not found"];
+        return ['type' => "UserNotFound"];
     } catch (\Exception $e) {
-        return ['error' => "Unhandled error occurred"];
+        return ['type' => "UnexpectedError"];
     }
 }
 

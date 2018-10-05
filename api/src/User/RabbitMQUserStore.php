@@ -118,30 +118,31 @@ class RabbitMQUserStore implements UserStore
      *
      * @return User Response parsed into User
      *
-     * @throws MalformedResponseException if the response is not a valid JSON
+     * @throws MalformedResponseException if the response is not a valid JSON or is of unexpected structure
      * @throws UserNotFoundException if user not found
      * @throws GenericException if something else is wrong and we do not what
      */
-    protected function parseResponse($rawResponse)
+    protected function parseResponse($rawResponse): User
     {
         $decodedResponse = json_decode($rawResponse, true);
 
         if ($decodedResponse === null && json_last_error() !== JSON_ERROR_NONE) {
-            throw new MalformedResponseException();
+            throw new MalformedResponseException($rawResponse);
         }
 
-
-        if(isset($decodedResponse['error']))
-        {
-            switch($decodedResponse['error'])
-            {
-                case 'Not found':
-                    throw new UserNotFoundException();
-                default:
-                    throw new GenericException();
-            }
+        if (!isset($decodedResponse['type'])) {
+            throw new MalformedResponseException($rawResponse);
         }
 
-        return User::fromArray($decodedResponse);
+        $type = $decodedResponse['type'];
+
+        switch ($type) {
+            case 'UserData':
+                return User::fromArray($decodedResponse['payload']);
+            case 'UserNotFound':
+                throw new UserNotFoundException();
+            case 'UnexpectedError':
+                throw new GenericException();
+        }
     }
 }
