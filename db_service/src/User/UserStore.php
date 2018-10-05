@@ -8,7 +8,9 @@ interface UserStore
      *
      * @param int $id Id to search against
      *
-     * @return array The user
+     * @return User The user
+     *
+     * @throws \OutOfBoundsException if ID is negative
      */
     public function get($id);
 }

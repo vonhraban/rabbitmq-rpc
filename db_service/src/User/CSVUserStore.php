@@ -36,13 +36,14 @@ class CSVUserStore implements UserStore
      *
      * @param int $id Id to search against
      *
-     * @return array The user
+     * @return User The user
      *
-     * @throws CSVReaderException
+     * @throws \OutOfBoundsException if ID is negative
+     * @throws Exception In some very odd and broken situations
      */
     public function get($id) {
         if($id < 0) {
-            throw new CSVReaderException("Negative IDs are not allowed");
+            throw new \OutOfBoundsException("Negative IDs are not allowed");
         }
 
         $record = (new Statement())
@@ -56,6 +57,6 @@ class CSVUserStore implements UserStore
             throw new UserNotFoundException();
         }
 
-        return $record;
+        return User::fromArray($record);
     }
 }

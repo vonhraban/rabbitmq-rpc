@@ -22,7 +22,7 @@ function findUsers($messageBody) { // TODO! Make this an array of payload of stu
     try {
         $user = $userStore->get((int)$messageBody);
 
-        return $user;
+        return $user->toArray();
 
     } catch (UserNotFoundException $e) {
         return ['error' => "Not found"];
