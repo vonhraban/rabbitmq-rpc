@@ -91,7 +91,12 @@ class RabbitMQUserStore implements UserStore
         $this->correlationId = uniqid();
 
         $msg = new AMQPMessage(
-            $id,
+            json_encode([
+                'command' => 'getUser',
+                'payload' => [
+                    'id' => $id
+                ]
+            ]),
             array(
                 'correlation_id' => $this->correlationId,
                 'reply_to' => $this->callback_queue

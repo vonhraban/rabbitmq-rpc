@@ -15,12 +15,19 @@ $connection = new AMQPStreamConnection(
     $config['rabbitmq']['password']
 );
 
-function findUsers($messageBody) { // TODO! Make this an array of payload of stuff etc
-    print_r($messageBody);
+function findUsers($command, array $payload) { // This message could be also a nice wrapper class
     global $config; // TODO this is not nice
+
+    // we only want that one single command
+    if($command != 'getUser') {
+        return false;
+    }
+
+    // some fancy validation logic could go here
+
     $userStore = new CSVUserStore($config['user_store']['source_csv']);
     try {
-        $user = $userStore->get((int)$messageBody);
+        $user = $userStore->get((int)$payload['id']);
 
         return $user->toArray();
 

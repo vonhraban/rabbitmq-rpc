@@ -47,8 +47,32 @@ class RabbitMQListener {
      * @param AMQPMessage $req Received request message
      */
     public function messageCallback(AMQPMessage $req) {
-        echo 'Received ', $req->body, "\n"; // TODO! Create an array with payload properties
-        $responseMessage = call_user_func($this->userCallback, $req->body);
+        echo 'Received ', $req->body, "\n";
+
+        $receivedMessage = json_decode($req->body, true);
+
+        // did we decode correctly?
+        if ($receivedMessage === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new MalformedMessageException($req->body);
+        }
+
+        // is the structure as expected?
+        if(!isset($receivedMessage['command']) || !isset($receivedMessage['payload']))
+        {
+            throw new MalformedMessageException($req->body);
+
+        }
+
+        $responseMessage = call_user_func(
+            $this->userCallback,
+            $receivedMessage['command'],
+            $receivedMessage['payload']
+        );
+
+        if($responseMessage === false) {
+            // do not do anything if the callback is not subscribed to that command
+            return;
+        }
 
         // TODO! only ack is the rezponse is not false
         // create message
