@@ -25,10 +25,11 @@ class RabbitMQListener {
     /**
      * Start listening to incoming messages
      *
+     * @param string $command Command to listen to
      * @param callable $userCallback Callback to be executed when the new message arrives
      *                              function(string $messageBody)
      */
-    public function listen($command, $userCallback) {
+    public function listen(string $command, callable $userCallback) {
         $this->userCallback[$command] = $userCallback;
 
         $this->channel->basic_qos(null, 1, null);
@@ -49,7 +50,7 @@ class RabbitMQListener {
      * @return bool True if succeeded, false if not
      */
     public function messageCallback(AMQPMessage $req): bool {
-        echo 'Received ', $req->body, "\n";
+        echo 'Received '. $req->body . "\n";
 
         $receivedMessage = json_decode($req->body, true);
 
@@ -65,7 +66,7 @@ class RabbitMQListener {
         }
 
         if(!isset($this->userCallback[$receivedMessage['command']])) {
-            echo "I do not know how to handle `" . $receivedMessage['command'] . "` command";
+            echo "I do not know how to handle `" . $receivedMessage['command'] . "` command \n";
             return false;
         }
 
@@ -73,6 +74,8 @@ class RabbitMQListener {
             $this->userCallback[$receivedMessage['command']],
             $receivedMessage['payload']
         );
+
+        echo "Replying with " . json_encode($responseMessage) . "\n";
 
         // create message
         $msg = new AMQPMessage(

@@ -31,13 +31,14 @@ class User
 
     /**
      * User constructor.
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $email
-     * @param string $gender
-     * @param string $ipAddress
+     * @param string $firstName Optional first name
+     * @param string $lastName Optional last name
+     * @param string $email Optional email
+     * @param string $gender Optional gender
+     * @param string $ipAddress Optional ip address
      */
-    protected function __construct($firstName, $lastName, $email, $gender, $ipAddress)
+    protected function __construct(string $firstName = null, string $lastName = null, string $email = null,
+                                   string $gender = null, string $ipAddress = null)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;

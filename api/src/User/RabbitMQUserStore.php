@@ -78,14 +78,14 @@ class RabbitMQUserStore implements UserStore
     /**
      * Get user details by id
      *
-     * @param string $id
+     * @param int $id
      * @return User Response parsed into User
      *
      * @throws MalformedResponseException if the response is not a valid JSON
      * @throws UserNotFoundException if user not found
      * @throws GenericException if something else is wrong and we do not what
      */
-    public function get($id): User
+    public function get(int $id): User
     {
         $this->response = null;
         $this->correlationId = uniqid();
@@ -122,7 +122,7 @@ class RabbitMQUserStore implements UserStore
      * @throws UserNotFoundException if user not found
      * @throws GenericException if something else is wrong and we do not what
      */
-    protected function parseResponse($rawResponse): User
+    protected function parseResponse(string $rawResponse): User
     {
         $decodedResponse = json_decode($rawResponse, true);
 

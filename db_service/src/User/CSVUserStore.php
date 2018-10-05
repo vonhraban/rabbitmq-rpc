@@ -41,14 +41,15 @@ class CSVUserStore implements UserStore
      * @throws \OutOfBoundsException if ID is negative
      * @throws Exception In some very odd and broken situations
      */
-    public function get($id): User {
+    public function get(int $id): User {
         if($id < 0) {
             throw new \OutOfBoundsException("Negative IDs are not allowed");
         }
 
         $record = (new Statement())
             ->where(function($record) use ($id) {
-                return $record['id'] == $id;
+                // cast to string explicitly
+                return $record['id'] === (string) $id;
             })
             ->process($this->reader)
             ->fetchOne();
