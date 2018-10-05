@@ -8,6 +8,10 @@ class MalformedResponseException extends \RuntimeException
      */
     private $rawData;
 
+    /**
+     * MalformedResponseException constructor.
+     * @param string $rawData
+     */
     public function __construct(string $rawData)
     {
         parent::__construct("Received malformed message");

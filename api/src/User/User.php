@@ -55,7 +55,7 @@ class User
      *
      * @return User
      */
-    static function fromArray(array $data) {
+    static function fromArray(array $data): self {
         return new static(
             $data['first_name'] ?? null,
             $data['last_name'] ?? null,
@@ -70,7 +70,7 @@ class User
      *
      * @return array of first_name, last_name, email, gender, ip_address
      */
-    public function toArray() {
+    public function toArray(): array {
         return [
             "first_name" => $this->firstName,
             "last_name" => $this->lastName,

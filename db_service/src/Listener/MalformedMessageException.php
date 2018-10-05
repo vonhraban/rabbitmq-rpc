@@ -1,8 +1,6 @@
 <?php
 namespace Datix\Server\Listener;
 
-use Throwable;
-
 class MalformedMessageException extends \RuntimeException
 {
     /**
@@ -10,6 +8,10 @@ class MalformedMessageException extends \RuntimeException
      */
     private $rawData;
 
+    /**
+     * MalformedMessageException constructor.
+     * @param string $rawData
+     */
     public function __construct(string $rawData)
     {
         parent::__construct("Received malformed message");

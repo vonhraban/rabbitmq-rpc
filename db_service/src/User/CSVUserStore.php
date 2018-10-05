@@ -41,7 +41,7 @@ class CSVUserStore implements UserStore
      * @throws \OutOfBoundsException if ID is negative
      * @throws Exception In some very odd and broken situations
      */
-    public function get($id) {
+    public function get($id): User {
         if($id < 0) {
             throw new \OutOfBoundsException("Negative IDs are not allowed");
         }

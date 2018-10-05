@@ -12,5 +12,5 @@ interface UserStore
      *
      * @throws \OutOfBoundsException if ID is negative
      */
-    public function get($id);
+    public function get($id): User;
 }

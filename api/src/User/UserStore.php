@@ -13,5 +13,5 @@ interface UserStore
      * @throws UserNotFoundException if user not found
      * @throws GenericException if something else is wrong and we do not what
      */
-    public function get($id);
+    public function get($id): User;
 }
