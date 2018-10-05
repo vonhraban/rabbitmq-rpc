@@ -2,7 +2,7 @@
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Datix\User\RabbitMQUserStore;
 
-const QUEUE_NAME = 'rpc_queue';
+$config = require_once 'config.php';
 
 $c = new \Slim\Container();
 
@@ -13,15 +13,14 @@ $c['errorHandler'] = function ($c) {
     };
 };
 
-
-$rpcConnection = new AMQPStreamConnection(
-    'rabbitmq',
-    5672,
-    'guest',
-    'guest'
+$connection = new AMQPStreamConnection(
+    $config['rabbitmq']['host'],
+    $config['rabbitmq']['port'],
+    $config['rabbitmq']['user'],
+    $config['rabbitmq']['password']
 );
 
-$c['user_store'] = new RabbitMQUserStore($rpcConnection, QUEUE_NAME);
+$c['user_store'] = new RabbitMQUserStore($connection, $config['rabbitmq']['queue_name']);
 
 
 return new \Slim\App($c);
