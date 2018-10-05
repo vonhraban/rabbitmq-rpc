@@ -13,6 +13,15 @@ $c['errorHandler'] = function ($c) {
     };
 };
 
+//Override the default Not Found Handler
+$c['notFoundHandler'] = function ($c) {
+    return function ($request, $response) use ($c) {
+        return $c['response']->withStatus(404)
+            ->withHeader('Content-Type', 'application/json');
+    };
+};
+
+
 $connection = new AMQPStreamConnection(
     $config['rabbitmq']['host'],
     $config['rabbitmq']['port'],
