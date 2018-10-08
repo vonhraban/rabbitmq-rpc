@@ -15,6 +15,12 @@ docker-compose up -d
 ```
 only
 
+Note this takes a while as both service and api use rabbitMQ and therefore require
+bcmath extension that is not shipped with the official PHP docker container, and has
+to be therefore build when docker-compose up.
+
+There is a composer container used specifically for dependency installation.
+
 #### Usage
 
 To start listening to messages in the db service

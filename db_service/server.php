@@ -19,4 +19,5 @@ $userStore = new CSVUserStore($config['user_store']['source_csv']);
 $messageHandler = new MessageHandler($userStore);
 
 $listener = new RabbitMQListener($connection, $config['rabbitmq']['queue_name']);
+echo "[x] Listening to connections...";
 $listener->listen('getUser', [$messageHandler, 'findUsers']);

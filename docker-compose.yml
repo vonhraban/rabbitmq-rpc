@@ -19,10 +19,15 @@ services:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
-      - "15672:15672"
 
   rpc_server:
     build: ./build/rpc_server
     container_name: rpc_server
     volumes:
       - ./db_service:/var/app
+
+  composer:
+    build: ./build/composer
+    container_name: composer
+    volumes:
+      - .:/var/app
