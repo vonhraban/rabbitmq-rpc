@@ -2,10 +2,18 @@
 
 #### Installation
 
-To bring up the whole stack:
+To bring up the whole stack, install dependencies and start listening to connection:
 ```
- docker-compose up -d
+ ./start.sh
 ```
+
+This step involves the initial installation of dependencies. After this is done once,
+the stack can be spin up with
+
+```
+docker-compose up -d
+```
+only
 
 #### Usage
 
